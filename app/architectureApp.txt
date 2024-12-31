@@ -1,0 +1,199 @@
+Architecture MVVM (Model-View-ViewModel)
+L'architecture MVVM est un modèle d'architecture de développement logiciel qui permet de séparer clairement les préoccupations dans une application.
+Elle est principalement utilisée dans le développement d'applications avec interfaces utilisateur riches
+(par exemple, Android, mais elle peut également être utilisée dans une
+application console ou toute autre application logicielle).
+
+Voici les trois principales couches de l'architecture MVVM :
+
+1. Model
+Le Model représente la logique métier et les données de l'application.
+Il est responsable de la gestion des données et de l'accès aux sources de données (base de données, API, fichiers, etc.).
+ Le Model ne connaît pas directement l'interface utilisateur.
+ Il expose des méthodes qui peuvent être utilisées par la couche ViewModel pour récupérer les données.
+
+Exemple : Une classe qui représente un utilisateur (nom, email, etc.) ou un repository qui interagit avec une base de données ou une API.
+2. View
+La View est responsable de l'affichage des données à l'utilisateur et de la
+gestion de l'interaction de l'utilisateur (clics, saisies, etc.).
+La View écoute les changements dans le ViewModel et met à jour l'interface utilisateur en conséquence.
+La View ne contient pas de logique métier et est uniquement concernée par l'affichage.
+
+Exemple : Dans une application console, la View peut être une classe qui affiche des informations sur les
+utilisateurs dans la console.
+3. ViewModel
+Le ViewModel agit comme un intermédiaire entre le Model et la View.
+Il contient la logique de présentation, récupère les données du Model, et les expose d'une manière adaptée à
+l'interface utilisateur.
+Il prépare également les données pour la View, mais ne gère pas directement l'affichage.
+
+Exemple : Une classe qui récupère une liste d'utilisateurs à partir d'un repository (le Model)
+et expose cette liste à la View sous une forme que la View peut utiliser.
+Flux de données dans MVVM :
+View : Demande des données au ViewModel.
+ViewModel : Interroge le Model pour obtenir les données nécessaires.
+Model : Fournit les données au ViewModel.
+ViewModel : Fournit les données sous forme adaptée à la View.
+View : Affiche les données à l'utilisateur.
+Exemple de MVVM dans une application console :
+Prenons l'exemple d'une application console qui affiche une liste d'utilisateurs. Voici comment l'architecture MVVM se séparerait :
+
+Model : Un User contenant les informations de l'utilisateur et un UserRepository pour récupérer les utilisateurs.
+ViewModel : Un UserViewModel qui récupère les utilisateurs du UserRepository et les formate pour l'affichage.
+View : Une UserView qui affiche les utilisateurs dans la console.
+Avantages de MVVM :
+Séparation des préoccupations : Chaque couche a une responsabilité bien définie. L
+e Model gère les données, le ViewModel gère la logique de présentation, et la View gère l'affichage.
+Testabilité : La logique de présentation (dans le ViewModel) peut être testée indépendamment de l'interface utilisateur.
+Réutilisabilité : Le ViewModel peut être réutilisé avec différentes vues (par exemple, une vue Android et une vue console).
+Maintenabilité : En séparant clairement les responsabilités, le code est plus facile à maintenir et à faire évoluer.
+Conclusion
+L'architecture MVVM est idéale pour les applications où il est important de séparer la logique métier,
+la logique de présentation et l'affichage. Elle est particulièrement utile dans les applications avec des interfaces utilisateurs complexes,
+mais elle peut être appliquée dans des applications console pour garder le code propre et maintenable.
+
+
++-----------------------+        +-----------------------+
+|       View            | <----> |    ViewModel          |
+| (UI - Activity,       |        | (Présente les données |
+|  Fragment, Compose)    |        |  à la vue et gère la  |
+|                       |        |  logique de présentation)|
++-----------------------+        +-----------------------+
+               ^                           |
+               |                           v
+         Observe les données        Appel au Repository
+                                      pour accéder aux données
+                                        (base de données, API, etc.)
+                              +-----------------------+
+                              |        Repository      |
+                              +-----------------------+
+                                        |
+                                        v
+                              +-----------------------+
+                              |         Model          |
+                              | (Données, DAO, API,    |
+                              |  règles métier)        |
+                              +-----------------------+
+
+
+
+1. Model (Modèle)
+Rôle : Le modèle contient les données et la logique métier de l'application.
+Responsabilité : Il interagit avec la base de données, les API, ou d'autres sources de données, et
+encapsule les règles métier.
+Exemples :
+Classes de données représentant des entités (User, Product, etc.).
+DAO (Data Access Object) si vous utilisez une base de données locale comme Room.
+Services réseau (par exemple, via Retrofit ou une API REST).
+Exemple de Model :
+kotlin
+Copier le code
+data class User(
+    val id: Int,
+    val name: String,
+    val email: String
+)
+
+@Dao
+interface UserDao {
+    @Query("SELECT * FROM user WHERE id = :id")
+    suspend fun getUserById(id: Int): User?
+
+    @Insert
+    suspend fun insertUser(user: User)
+}
+2. View (Vue)
+Rôle : La Vue est responsable de l'affichage de l'interface utilisateur (UI).
+Responsabilité : Elle observe le ViewModel et met à jour l'interface en fonction des données qu'elle reçoit.
+Elle ne contient aucune logique métier.
+Exemples :
+Activités (Activity) ou Fragments.
+Composables dans Jetpack Compose.
+XML pour l'interface dans les applications Android traditionnelles.
+Exemple de View :
+Dans Jetpack Compose (Android), la vue pourrait ressembler à ceci :
+
+kotlin
+Copier le code
+@Composable
+fun UserScreen(viewModel: UserViewModel) {
+    val user by viewModel.user.observeAsState()
+
+    Column {
+        if (user != null) {
+            Text("Nom: ${user?.name}")
+            Text("Email: ${user?.email}")
+        } else {
+            Text("Utilisateur introuvable.")
+        }
+    }
+}
+Dans une Activity ou Fragment :
+
+kotlin
+Copier le code
+class UserActivity : AppCompatActivity() {
+    private lateinit var userViewModel: UserViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_user)
+
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+
+        userViewModel.user.observe(this, Observer { user ->
+            // Mettre à jour l'UI avec les informations de l'utilisateur
+            findViewById<TextView>(R.id.userName).text = user?.name
+        })
+
+        userViewModel.fetchUser(1) // Exemple de récupération d'un utilisateur
+    }
+}
+3. ViewModel
+Rôle : Le ViewModel contient la logique de présentation. Il est responsable de la gestion des données et
+de leur formatage pour l'affichage dans la vue. Il sert d'intermédiaire entre le Model (logique métier) et
+la View (interface utilisateur).
+Responsabilité : Le ViewModel expose les données sous une forme que la Vue peut consommer,
+ et il récupère les données du Model. Le ViewModel ne contient aucune référence directe à la vue et
+ ne doit pas gérer l'affichage directement.
+Il utilise souvent des objets comme LiveData ou StateFlow pour gérer les données de manière réactive.
+Exemple de ViewModel :
+kotlin
+Copier le code
+class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
+
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> get() = _user
+
+    fun fetchUser(id: Int) {
+        viewModelScope.launch {
+            val user = userRepository.getUserById(id)
+            _user.postValue(user)
+        }
+    }
+}
+4. Repository
+Le Repository est un composant intermédiaire entre le ViewModel et le Model.
+Il fournit une API simple pour accéder aux données, qu'elles proviennent de la base de données locale,
+d'une API ou d'une autre source. Cela permet de centraliser l'accès aux données et de simplifier le ViewModel.
+
+Exemple de Repository :
+kotlin
+Copier le code
+class UserRepository(private val userDao: UserDao) {
+
+    suspend fun getUserById(id: Int): User? {
+        return userDao.getUserById(id)
+    }
+
+    suspend fun insertUser(user: User) {
+        userDao.insertUser(user)
+    }
+}
+Flux de données
+Voici comment les données circulent dans une application MVVM :
+
+Vue : L'interface utilisateur observe le ViewModel pour les changements de données.
+ViewModel : Le ViewModel interagit avec le Model pour récupérer les données (souvent via un Repository).
+Model : Le Model fournit les données réelles et la logique métier.
+Il peut faire appel à une base de données locale (comme Room), un service web (via Retrofit), ou d'autres sources.
