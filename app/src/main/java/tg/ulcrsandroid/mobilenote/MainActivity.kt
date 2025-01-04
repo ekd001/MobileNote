@@ -1,12 +1,18 @@
 package tg.ulcrsandroid.mobilenote
 
+import android.app.Dialog
 import android.content.Intent
 import tg.ulcrsandroid.mobilenote.R
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.PopupMenu
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
@@ -30,41 +36,9 @@ class MainActivity : AppCompatActivity() {
 
         // Les categories
         val gridLayout = ui.gridLayout
-        for (i in 1..6) {  // Supposons que tu veux 6 conteneurs
-            val container = layoutInflater.inflate(R.layout.grid_item, gridLayout, false)
-            gridLayout.addView(container)
 
-            // Récupérer l'ImageView des trois points dans chaque conteneur
-            val threeDots = container.findViewById<ImageView>(R.id.threeDots)
-            threeDots.setOnClickListener {
-                // Créer et afficher le PopupMenu
-                val popupMenu = PopupMenu(this, threeDots)
-                popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-
-                // Gérer les clics sur les éléments du menu
-                popupMenu.setOnMenuItemClickListener { item ->
-                    when (item.itemId) {
-                        R.id.modifier -> {
-                            Toast.makeText(this, "Modifier sélectionné", Toast.LENGTH_SHORT).show()
-                            true
-                        }
-                        R.id.supprimer -> {
-                            Toast.makeText(this, "Supprimer sélectionné", Toast.LENGTH_SHORT).show()
-                            true
-                        }
-                        else -> false
-                    }
-                }
-
-                popupMenu.show()
-            }
-
-            container.setOnClickListener {
-                // Démarrer une autre activité
-                val intent = Intent(this, CategorieActivity::class.java)
-                // Passer des données supplémentaires si nécessaire
-                startActivity(intent)
-            }
+        ui.buttonAjouter.setOnClickListener {
+            showAddDialog()
         }
     }
 
@@ -72,5 +46,77 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         return true
+    }
+
+    private fun showAddDialog() {
+        // Créer un Dialog
+        val dialog = Dialog(this)
+        val view = LayoutInflater.from(this).inflate(R.layout.add_categorie, null)
+        dialog.setContentView(view)
+
+        val editTextNom = view.findViewById<EditText>(R.id.editTextNom)
+        val editTextDescription = view.findViewById<EditText>(R.id.editTextDescription)
+        val buttonValider = view.findViewById<Button>(R.id.buttonValider)
+
+        buttonValider.setOnClickListener {
+            val nom = editTextNom.text.toString()
+            val description = editTextDescription.text.toString()
+
+            if (nom.isNotEmpty()) {
+                // Créer une nouvelle vue à partir de `grid_item`
+                val newContainer = layoutInflater.inflate(R.layout.grid_item, ui.gridLayout, false)
+                val titleView = newContainer.findViewById<TextView>(R.id.categorieTitle)
+                titleView.text = nom
+
+                val threeDots = newContainer.findViewById<ImageView>(R.id.threeDots)
+                threeDots.setOnClickListener {
+                    // Créer et afficher le PopupMenu
+                    val popupMenu = PopupMenu(this, threeDots)
+                    popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+
+                    // Gérer les clics sur les éléments du menu
+                    popupMenu.setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.modifier -> {
+                                showAddDialog()
+                                Toast.makeText(this, "Categorie modifiée", Toast.LENGTH_SHORT).show()
+                                true
+                            }
+                            R.id.supprimer -> {
+                                ui.gridLayout.removeView(newContainer)
+                                Toast.makeText(this, "Categorie supprimée", Toast.LENGTH_SHORT).show()
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+
+                    popupMenu.show()
+                }
+
+                newContainer.setOnClickListener {
+                    // Démarrer une autre activité
+                    val intent = Intent(this, CategorieActivity::class.java)
+                    startActivity(intent)
+                }
+
+                // Ajouter la nouvelle vue au GridLayout
+                ui.gridLayout.addView(newContainer)
+
+                Toast.makeText(this, "Categorie $nom ajoutée", Toast.LENGTH_LONG).show()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "Veuillez renseigner le nom.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.window?.setBackgroundDrawableResource(R.drawable.rounded_frame)
+
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.7).toInt(), // 90% de la largeur de l'écran
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        dialog.show()
     }
 }

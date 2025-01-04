@@ -13,6 +13,9 @@
         android:theme="@style/Theme.MobileNote"
         tools:targetApi="31">
         <activity
+            android:name=".NoteSpace"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true" />
         <activity
@@ -20,8 +23,8 @@
             android:exported="true" />
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
