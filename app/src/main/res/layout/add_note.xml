@@ -19,8 +19,13 @@
 
     <EditText
         android:id="@+id/editTextNom"
+<<<<<<< HEAD
         android:layout_width="50dp"
         android:layout_height="48dp"
+=======
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+>>>>>>> cf5a41e724969f36d82d368fe92205d35e3963aa
         android:hint="Titre de la note"
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/labelNom"

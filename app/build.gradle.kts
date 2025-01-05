@@ -44,15 +44,20 @@ android {
 }
 
 dependencies {
-
+    implementation("com.google.android.material:material:1.10.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+<<<<<<< HEAD
     implementation(libs.core.ktx)
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.gridlayout)
+=======
+    implementation(libs.androidx.gridlayout)
+    implementation(libs.androidx.ui.android)
+>>>>>>> cf5a41e724969f36d82d368fe92205d35e3963aa
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

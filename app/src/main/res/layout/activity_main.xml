@@ -6,7 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
+<<<<<<< HEAD
     tools:context=".ui.view.MainActivity">
+=======
+    tools:context=".MainActivity">
+>>>>>>> cf5a41e724969f36d82d368fe92205d35e3963aa
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -27,12 +31,22 @@
         android:layout_marginBottom="7dp"
         app:layout_constraintBottom_toTopOf="@id/buttonAjouter">
 
+<<<<<<< HEAD
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewCategories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp" />
 
+=======
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:columnCount="2"
+            app:orientation="horizontal" />
+>>>>>>> cf5a41e724969f36d82d368fe92205d35e3963aa
 
     </androidx.core.widget.NestedScrollView>
 
