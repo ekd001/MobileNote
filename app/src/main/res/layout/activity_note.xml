@@ -5,8 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".ui.view.MainActivity">
+    tools:context=".ui.view.note.NoteActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -17,31 +16,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView"
+    <!-- Champ de saisie -->
+    <EditText
+        android:id="@+id/editTextNote"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:hint="Écrivez vos notes ici..."
+        android:textSize="16sp"
+        android:background="@android:color/transparent"
+        android:gravity="top|start"
+        android:padding="10dp"
+        android:inputType="textMultiLine|textCapSentences"
+        android:scrollbars="vertical"
+        android:overScrollMode="ifContentScrolls"
+        android:imeOptions="flagNoEnterAction"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="7dp"
-        app:layout_constraintBottom_toTopOf="@id/buttonAjouter">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewCategories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" />
-
-
-    </androidx.core.widget.NestedScrollView>
-
-    <Button
-        android:id="@+id/buttonAjouter"
-        android:layout_width="200dp"
-        android:layout_height="55dp"
-        android:text="Ajouter"
-        android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
